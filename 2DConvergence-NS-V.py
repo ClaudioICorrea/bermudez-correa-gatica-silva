@@ -6,8 +6,8 @@ Manufactured smooth solutions
 #######################################
 strong primal form: 
 
--div(mu|grad(u)|grad(u)) + grad(u)*u + grad(p) = f  in Omega
-                                        div(u) = 0  in Omega 
+-div(mu(|grad(u)|)grad(u)) + grad(u)*u + grad(p) = f  in Omega
+                                          div(u) = 0  in Omega 
 
 Pure Dirichlet conditions for u 
                                                 u = g on Gamma
@@ -30,7 +30,7 @@ strong mixed form in terms of (t,sigma,u)
 
 from fenics import *
 import numpy as np
-#from dolfin import *
+from dolfin import *
 
 parameters["form_compiler"]["representation"] = "uflacs"
 parameters["form_compiler"]["cpp_optimize"] = True
@@ -47,16 +47,29 @@ ndim = 2
 Id = Identity(ndim)
 
 # variable viscosity 
+'''
+def muu(t):
+    print(t.get_local_vector())
+    norm_tt = 0
+    for tt in t :
+        for ss in t :
+            norm_tt = norm_tt + tt*ss
+    norm_tt = pow(norm_tt,0.5)
+    print(norm_tt)
+    return 2. + norm_tt
+'''    
 
-mu  = lambda t: 2. + pow(1.+(inner(t, t)),-1)
-# Manufactured solutions as strings 
+def mu(t):
+    return conditional(inner(t, t) <= 1e-14, 2., 2. + pow(1. + pow(inner(t, t), 0.5), -1.))
 
-u_str = '(-cos(pi*x)*sin(pi*y),sin(pi*x)*cos(pi*y))'
+# Manufactured solutions as strings# 
+
+u_str = '(sin(pi*x)*cos(pi*y),-cos(pi*x)*sin(pi*y))'
 p_str = 'x**2 - y**2'
 
 # Initializing vectors for error history 
 
-nkmax = 4; # max refinements
+nkmax = 8; # max refinements
 
 dof = [];
 hh = []; dof = []; 
@@ -99,6 +112,9 @@ for nk in range(nkmax):
     ss = as_tensor(((s_[0], s_[1]),(s_[2],-s_[0])))
     tau = as_tensor((taux,tauy))
     sig = as_tensor((sigx,sigy))
+    
+    # muu(t_)
+    #
 
 
     # ********* instantiation of exact solutions ****** #
@@ -107,9 +123,9 @@ for nk in range(nkmax):
     
     # Instantiation of exact solutions
     
-    
     tt_ex  = grad(u_ex)
-    sig_ex =  mu(tt_ex)*tt_ex - outer(u_ex,u_ex) - p_ex*Id
+    #c= -(0.5*inner(tr(outer(u_ex,u_ex)),1.)*dx)*Id
+    sig_ex =  mu(tt_ex)*tt_ex - outer(u_ex,u_ex) - p_ex*Id #-c*Id
 
 
     # source and forcing terms
@@ -129,11 +145,11 @@ for nk in range(nkmax):
 
 
     A_st= inner(mu(tt)*tt,ss)*dx #
-    B1_ssig = -inner(dev(sig),ss)*dx 
+    B1_ssig = inner(dev(sig),ss)*dx 
     c_uu = inner(dev(outer(u,u)), ss)*dx 
     B1_ttau = inner(dev(tau),tt)*dx
     B_tauu =  dot(u,div(tau))*dx
-    B_sigv =  -dot(v,div(sig))*dx  
+    B_sigv =  dot(v,div(sig))*dx  
     
 
     GG = dot(tau*n,gg)*ds
@@ -144,9 +160,9 @@ for nk in range(nkmax):
     ZZ = tr(sig-sig_ex)*zeta*dx + (tr(outer(u,u)-outer(u_ex,u_ex)))*zeta*dx \
         + tr(tau) * theta * dx\
 
-    Nonl = A_st + B1_ssig - c_uu \
-            + B1_ttau + B_tauu - GG \
-            + B_sigv - FF \
+    Nonl = A_st - B1_ssig - c_uu \
+                - B1_ttau - B_tauu + GG \
+                          - B_sigv - FF \
             + ZZ                        
     
     # Solver specifications (including essential BCs if any)
@@ -181,10 +197,10 @@ for nk in range(nkmax):
    
     # saving to file
 
-    #uh.rename("u","u"); fileO.write(uh,nk*1.0)
-    #t_v.rename("t","t"); fileO.write(t_v,nk*1.0)
-    #sig_v.rename("sig","sig"); fileO.write(sig_v,nk*1.0)
-    #ph.rename("p","p"); fileO.write(ph,nk*1.0)
+    uh.rename("u","u"); fileO.write(uh,nk*1.0)
+    t_v.rename("t","t"); fileO.write(t_v,nk*1.0)
+    sig_v.rename("sig","sig"); fileO.write(sig_v,nk*1.0)
+    ph.rename("p","p"); fileO.write(ph,nk*1.0)
    
     # Error computation (uh,    th_, sighx, sighy,  p)
 

@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="3.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Domain>
+    <Grid Name="TimeSeries" GridType="Collection" CollectionType="Temporal">
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="8" TopologyType="Triangle" NodesPerElement="3">
+          <DataItem Dimensions="8 3" NumberType="UInt" Format="HDF">2DConvergence-NS-V.h5:/Mesh/0/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XY">
+          <DataItem Dimensions="9 2" Format="HDF">2DConvergence-NS-V.h5:/Mesh/0/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="0.000000000000000e+00" />
+        <Attribute Name="u" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="8 3" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/0</DataItem>
+        </Attribute>
+        <Attribute Name="t" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="8 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/1</DataItem>
+        </Attribute>
+        <Attribute Name="sig" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="8 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/2</DataItem>
+        </Attribute>
+        <Attribute Name="p" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="8 1" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/3</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="32" TopologyType="Triangle" NodesPerElement="3">
+          <DataItem Dimensions="32 3" NumberType="UInt" Format="HDF">2DConvergence-NS-V.h5:/Mesh/4/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XY">
+          <DataItem Dimensions="25 2" Format="HDF">2DConvergence-NS-V.h5:/Mesh/4/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="1.000000000000000e+00" />
+        <Attribute Name="u" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="32 3" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/4</DataItem>
+        </Attribute>
+        <Attribute Name="t" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="32 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/5</DataItem>
+        </Attribute>
+        <Attribute Name="sig" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="32 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/6</DataItem>
+        </Attribute>
+        <Attribute Name="p" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="32 1" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/7</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="128" TopologyType="Triangle" NodesPerElement="3">
+          <DataItem Dimensions="128 3" NumberType="UInt" Format="HDF">2DConvergence-NS-V.h5:/Mesh/8/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XY">
+          <DataItem Dimensions="81 2" Format="HDF">2DConvergence-NS-V.h5:/Mesh/8/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="2.000000000000000e+00" />
+        <Attribute Name="u" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="128 3" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/8</DataItem>
+        </Attribute>
+        <Attribute Name="t" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="128 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/9</DataItem>
+        </Attribute>
+        <Attribute Name="sig" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="128 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/10</DataItem>
+        </Attribute>
+        <Attribute Name="p" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="128 1" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/11</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="512" TopologyType="Triangle" NodesPerElement="3">
+          <DataItem Dimensions="512 3" NumberType="UInt" Format="HDF">2DConvergence-NS-V.h5:/Mesh/12/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XY">
+          <DataItem Dimensions="289 2" Format="HDF">2DConvergence-NS-V.h5:/Mesh/12/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="3.000000000000000e+00" />
+        <Attribute Name="u" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="512 3" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/12</DataItem>
+        </Attribute>
+        <Attribute Name="t" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="512 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/13</DataItem>
+        </Attribute>
+        <Attribute Name="sig" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="512 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/14</DataItem>
+        </Attribute>
+        <Attribute Name="p" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="512 1" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/15</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="2048" TopologyType="Triangle" NodesPerElement="3">
+          <DataItem Dimensions="2048 3" NumberType="UInt" Format="HDF">2DConvergence-NS-V.h5:/Mesh/16/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XY">
+          <DataItem Dimensions="1089 2" Format="HDF">2DConvergence-NS-V.h5:/Mesh/16/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="4.000000000000000e+00" />
+        <Attribute Name="u" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="2048 3" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/16</DataItem>
+        </Attribute>
+        <Attribute Name="t" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="2048 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/17</DataItem>
+        </Attribute>
+        <Attribute Name="sig" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="2048 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/18</DataItem>
+        </Attribute>
+        <Attribute Name="p" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="2048 1" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/19</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="8192" TopologyType="Triangle" NodesPerElement="3">
+          <DataItem Dimensions="8192 3" NumberType="UInt" Format="HDF">2DConvergence-NS-V.h5:/Mesh/20/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XY">
+          <DataItem Dimensions="4225 2" Format="HDF">2DConvergence-NS-V.h5:/Mesh/20/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="5.000000000000000e+00" />
+        <Attribute Name="u" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="8192 3" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/20</DataItem>
+        </Attribute>
+        <Attribute Name="t" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="8192 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/21</DataItem>
+        </Attribute>
+        <Attribute Name="sig" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="8192 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/22</DataItem>
+        </Attribute>
+        <Attribute Name="p" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="8192 1" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/23</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="mesh" GridType="Uniform">
+        <Topology NumberOfElements="32768" TopologyType="Triangle" NodesPerElement="3">
+          <DataItem Dimensions="32768 3" NumberType="UInt" Format="HDF">2DConvergence-NS-V.h5:/Mesh/24/mesh/topology</DataItem>
+        </Topology>
+        <Geometry GeometryType="XY">
+          <DataItem Dimensions="16641 2" Format="HDF">2DConvergence-NS-V.h5:/Mesh/24/mesh/geometry</DataItem>
+        </Geometry>
+        <Time Value="6.000000000000000e+00" />
+        <Attribute Name="u" AttributeType="Vector" Center="Cell">
+          <DataItem Dimensions="32768 3" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/24</DataItem>
+        </Attribute>
+        <Attribute Name="t" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="32768 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/25</DataItem>
+        </Attribute>
+        <Attribute Name="sig" AttributeType="Tensor" Center="Cell">
+          <DataItem Dimensions="32768 9" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/26</DataItem>
+        </Attribute>
+        <Attribute Name="p" AttributeType="Scalar" Center="Cell">
+          <DataItem Dimensions="32768 1" Format="HDF">2DConvergence-NS-V.h5:/VisualisationVector/27</DataItem>
+        </Attribute>
+      </Grid>
+    </Grid>
+  </Domain>
+</Xdmf>

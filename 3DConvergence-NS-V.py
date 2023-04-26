@@ -30,6 +30,7 @@ strong mixed form in terms of (t,sigma,u)
 
 from fenics import *
 import sympy2fenics as sf
+import dolfin
 
 str2exp = lambda s: sf.sympy2exp(sf.str2sympy(s))
 
@@ -47,7 +48,10 @@ Id = Identity(ndim)
 lam = Constant(0.2)
 
 # variable viscosity 
-mu  = lambda t: 2. + pow((1.+np.linalg.norm(t, ord=2)),-1)
+
+
+def mu(t):
+    return conditional(inner(t, t) <= 1e-14, 2., 2. + pow(1. + pow(inner(t, t), 0.5), -1.))
 
 # ******* Exact solutions for error analysis ****** #
 
@@ -153,19 +157,19 @@ for nk in range(nkmax):
     solver.parameters['newton_solver']['maximum_iterations'] = 25
     
     solver.solve()
-    '''
-    th_, sigh1, sigh2, sigh3, bsolh, uh, gamh_, xih = Usol.split()
+    
+    uh,    th_, sighx, sighy, sighz,  thetah= Sol.split()
+    
 
     th=as_tensor(((th_[0],th_[1],th_[2]),(th_[3],th_[4],th_[5]),(th_[6],th_[7],-th_[0]-th_[4])))
-    sigmah = as_tensor((sigh1,sigh2,sigh3)) + curlTen(bsolh) 
-    gammah=as_tensor(((   0.0, gamh_[0], gamh_[1]),
-                     (-gamh_[0],   0.0, gamh_[2]),
-                     (-gamh_[1],-gamh_[2],  0.0)))
+    sigh = as_tensor((sighx,sighy,sighz)) 
     
     # dimension-dependent
-    ph = project(-1./ndim*tr(sigmah+outer(uh,uh)),Ph)
-    Th = TensorFunctionSpace(mesh, 'DG', l)
-    sig_v = project(sigmah, Th)
+
+    Ph = FunctionSpace(mesh, 'DG', k)
+    ph = project(-1./ndim*tr(sigh+outer(uh,uh)),Ph)
+    Th = TensorFunctionSpace(mesh, 'DG', k)
+    sig_v = project(sigh, Th)
     t_v = project(th, Th)
 
     # saving to file
@@ -175,58 +179,34 @@ for nk in range(nkmax):
     sig_v.rename("sig","sig"); fileO.write(sig_v,nk*1.0)
     ph.rename("p","p"); fileO.write(ph,nk*1.0)
 
-    E_t   = assemble((th-t_ex)**2*dx)
-    E_sig1 = assemble((sigma_ex-sigmah)**2*dx)
-    E_sig2 = assemble(dot(div(sigma_ex)-div(sigmah),div(sigma_ex)-div(sigmah))**(2./3.)*dx)# norm div,4/3
-    E_u   = assemble(dot(uh-u_ex,uh-u_ex)**2*dx) # norm 0,4
-    E_gam = assemble((gammah-gamma_ex)**2*dx)
-    E_p   = assemble((ph-p_ex)**2*dx)
-    
-    errt.append(pow(E_t,0.5))
-    errsigma.append(pow(E_sig1,0.5)+pow(E_sig2,0.75)) # norm div,4/3
-    erru.append(pow(E_u,0.25)) # norm 0,4
-    errgamma.append(pow(E_gam,0.5))
-    errp.append(pow(E_p,0.5))
-    
-    if(nk>0):
-        ratet.append(ln(errt[nk]/errt[nk-1])/ln(hvec[nk]/hvec[nk-1]))
-        ratesigma.append(ln(errsigma[nk]/errsigma[nk-1])/ln(hvec[nk]/hvec[nk-1]))
-        rateu.append(ln(erru[nk]/erru[nk-1])/ln(hvec[nk]/hvec[nk-1]))
-        rategamma.append(ln(errgamma[nk]/errgamma[nk-1])/ln(hvec[nk]/hvec[nk-1]))
-        ratep.append(ln(errp[nk]/errp[nk-1])/ln(hvec[nk]/hvec[nk-1]))
-        
-        
+    E_u = assemble(dot(u_ex-uh,u_ex-uh)**4*dx)  # (|| u - uh ||_L4)**4
+    E_tt = assemble(inner(tt_ex - th,tt_ex-th)*dx) # (|| t - th ||_L2)**2
+    E_sigma_0 = assemble(inner(sig_ex-sigh,sig_ex-sigh)*dx) # (||sig0 -sig0h||_L2)**2
+    E_sigma_div = assemble(dot(div(sig_ex-sigh),div(sig_ex-sigh))**(4./3.)*dx) #(||div(sig0 -sig0h)||_0,4/3)**2
+    E_p = assemble((p_ex - ph)**2*dx) # ||ph-p||_L2
 
-# ********  Generating error history **** #
-print('==============================================================================================================')
-print('   nn  &   hh   &   e(t)   & r(t) &  e(sig)  & r(s) &   e(u)   & r(u) &  e(gam)  & r(g) &   e(p)   & r(p)  ')
-print('==============================================================================================================')
+    
+    et.append(pow(E_tt,0.5))
+    eu.append(pow(E_u,0.25))
+    esig.append(pow(E_sigma_0,0.5)+pow(E_sigma_div,0.75))
+    ep.append(pow(E_p,0.5))
+
+    if(nk>0):
+        rt.append(ln(et[nk]/et[nk-1])/ln(hh[nk]/hh[nk-1]))
+        rsig.append(ln(esig[nk]/esig[nk-1])/ln(hh[nk]/hh[nk-1]))
+        ru.append(ln(eu[nk]/eu[nk-1])/ln(hh[nk]/hh[nk-1]))
+        rp.append(ln(ep[nk]/ep[nk-1])/ln(hh[nk]/hh[nk-1]))
+    
+
+
+# Generating error history 
+print('=====================================================================================')
+print('   dof &  hh   &  e(t)  & r(t) & e(sig) & r(sig) & e(u) & r(u)   & e(p)   & r(p)  ')
+print('=====================================================================================')
 
 for nk in range(nkmax):
-    print('{:6d} & {:.4f} & {:1.2e} & {:.2f} & {:1.2e} & {:.2f} & {:1.2e} & {:.2f} & {:1.2e} & {:.2f} & {:1.2e} & {:.2f} '.format(nvec[nk], hvec[nk], errt[nk], ratet[nk], errsigma[nk], ratesigma[nk], erru[nk], rateu[nk], errgamma[nk], rategamma[nk], errp[nk], ratep[nk]))
-print('==============================================================================================================')
+    print('{:6d}  {:.4f}  {:1.2e}  {:.2f}  {:1.2e}  {:.2f}  {:1.2e}  {:.2f}   {:1.2e}  {:.2f} '.format(dof[nk], hh[nk], et[nk], rt[nk], esig[nk], rsig[nk], eu[nk], ru[nk], ep[nk], rp[nk]))
+print('======================================================================================')
 
 
 
-'''
-'''
-l = 0 
-
-==============================================================================================================
-   nn  &   hh   &   e(t)   & r(t) &  e(sig)  & r(s) &   e(u)   & r(u) &  e(gam)  & r(g) &   e(p)   & r(p)  
-==============================================================================================================
-  1111 & 1.7321 & 3.38e+00 & 0.00 & 1.75e+01 & 0.00 & 9.86e-01 & 0.00 & 4.23e+00 & 0.00 & 1.12e+00 & 0.00 
-  8698 & 0.8660 & 1.84e+00 & 0.88 & 8.32e+00 & 1.08 & 5.65e-01 & 0.80 & 1.46e+00 & 1.54 & 4.88e-01 & 1.20 
- 69016 & 0.4330 & 9.77e-01 & 0.91 & 4.26e+00 & 0.97 & 3.02e-01 & 0.90 & 5.18e-01 & 1.49 & 3.52e-01 & 0.47 
-550156 & 0.2165 & 4.96e-01 & 0.98 & 2.13e+00 & 1.00 & 1.55e-01 & 0.96 & 1.50e-01 & 1.79 & 1.91e-01 & 0.88 
-4393876 & 0.1083 & 2.50e-01 & 0.99 & 1.07e+00 & 1.00 & 7.80e-02 & 0.99 & 5.19e-02 & 1.53 & 9.55e-02 & 1.00 
-
-l=1
-
- 2266 & 1.7321 & 1.72e+00 & 0.00 & 1.05e+01 & 0.00 & 5.35e-01 & 0.00 & 1.38e+00 & 0.00 & 1.00e+00 & 0.00 
- 17632 & 0.8660 & 5.67e-01 & 1.60 & 2.91e+00 & 1.85 & 2.40e-01 & 1.15 & 3.93e-01 & 1.82 & 2.00e-01 & 2.32 
-139372 & 0.4330 & 1.61e-01 & 1.82 & 7.57e-01 & 1.94 & 6.58e-02 & 1.87 & 1.04e-01 & 1.92 & 5.39e-02 & 1.89 
-1108756 & 0.2165 & 4.43e-02 & 1.86 & 1.94e-01 & 1.97 & 1.71e-02 & 1.95 & 3.68e-02 & 1.50 & 1.41e-02 & 1.93 
-
-
-'''
